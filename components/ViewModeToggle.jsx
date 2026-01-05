@@ -5,8 +5,7 @@ import { useAppState } from '@/context/AppStateContext'
 const modes = [
   { id: 'supply-chain', label: '🗺️ Supply Chains' },
   { id: 'heatmap', label: '🔥 Heat Map' },
-  { id: 'factory', label: '🏭 Factories' },
-  { id: 'comparison', label: '📊 Comparison' }
+  { id: 'factory', label: '🏭 Factories' }
 ]
 
 export default function ViewModeToggle() {

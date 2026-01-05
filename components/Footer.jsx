@@ -1,68 +1,54 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function Footer() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [interactionCount, setInteractionCount] = useState(0)
-
-  useEffect(() => {
-    // Show after 30 seconds
-    const timer = setTimeout(() => {
-      setIsVisible(true)
-    }, 30000)
-
-    // Track interactions
-    const handleInteraction = () => {
-      setInteractionCount((prev) => {
-        const newCount = prev + 1
-        if (newCount >= 3) {
-          setIsVisible(true)
-        }
-        return newCount
-      })
-    }
-
-    window.addEventListener('click', handleInteraction)
-    window.addEventListener('keydown', handleInteraction)
-
-    return () => {
-      clearTimeout(timer)
-      window.removeEventListener('click', handleInteraction)
-      window.removeEventListener('keydown', handleInteraction)
-    }
-  }, [])
+  const [showInfo, setShowInfo] = useState(false)
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.footer
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="fixed bottom-0 w-full py-4 text-center text-sm backdrop-blur-sm z-10"
-          style={{
-            background: 'linear-gradient(to top, var(--bg-primary), transparent)'
-          }}
-        >
-          <div className="text-[var(--text-secondary)] mb-1">
-            Built by{' '}
-            <span className="font-medium">Animesh Srivastava</span>
-          </div>
-          <div className="mb-2">
-            <a
-              href="mailto:animesh.example@email.com"
-              className="text-[var(--teal-primary)] hover:text-[var(--teal-bright)] transition-colors"
-            >
-              animesh.example@email.com
-            </a>
-          </div>
-          <div className="text-xs text-[var(--text-muted)]">
-            Data sources: IEA, Higg MSI, GHG Protocol
-          </div>
-        </motion.footer>
-      )}
-    </AnimatePresence>
+    <div
+      className="fixed bottom-4 right-4 z-50"
+      onMouseEnter={() => setShowInfo(true)}
+      onMouseLeave={() => setShowInfo(false)}
+    >
+      {/* Info popover */}
+      <AnimatePresence>
+        {showInfo && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute bottom-14 right-0 max-w-xs bg-[#1E3A32]/95 backdrop-blur-lg rounded-lg p-3 shadow-xl border border-[#14B8A6]/30"
+          >
+            <div className="space-y-2 text-sm">
+              <div className="text-[#ECFDF5]">
+                Built by <span className="font-medium">Animesh Srivastava</span>
+              </div>
+              <div>
+                <a
+                  href="mailto:srivastavaanimesh22@gmail.com"
+                  className="text-[#14B8A6] hover:text-[#2DD4BF] transition-colors"
+                >
+                  srivastavaanimesh22@gmail.com
+                </a>
+              </div>
+              <div className="text-xs text-[#6EE7B7] pt-1 border-t border-[#14B8A6]/20">
+                Data sources: IEA, Higg MSI, GHG Protocol
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Info button */}
+      <button
+        className="w-10 h-10 rounded-full bg-[#1E3A32]/80 border border-[#14B8A6]/30 flex items-center justify-center text-[#14B8A6] hover:text-[#2DD4BF] hover:bg-[#1E3A32] transition-colors shadow-lg"
+        aria-label="Information"
+      >
+        <span className="text-lg font-serif">ⓘ</span>
+      </button>
+    </div>
   )
 }

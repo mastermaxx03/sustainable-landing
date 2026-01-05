@@ -9,7 +9,6 @@ A 3D interactive globe visualizing fashion supply chain emissions across the wor
   - Supply Chain: View countries and their supply chain routes
   - Heat Map: Visualize emission intensity by country
   - Factory View: See individual factory locations
-  - Comparison: Compare emissions across countries
 - **Real-time Emission Counter**: Watch daily global fashion emissions tick up
 - **Country Details**: Click any country to see detailed emissions data, factories, and materials
 - **Supply Chain Routes**: Explore step-by-step emission breakdowns for major trade routes
@@ -64,21 +63,25 @@ sustainable-landing/
 ## Design System
 
 ### Colors (CSS Variables)
+
 - Background: Dark teal-black palette
 - Primary: Teal-mint spectrum (#14B8A6, #5EEAD4)
 - Emissions: Green (low) → Amber (medium) → Red (high)
 
 ### Typography
+
 - Primary: Space Grotesk (300-900 weight)
 - Monospace: JetBrains Mono (for numbers)
 
 ### Interactions
+
 - Click countries to view details
 - Click supply chain arcs to see route breakdown
 - Toggle view modes to explore different perspectives
 - Camera auto-rotates and can be manually controlled
 
 ## TODO: Future Enhancements
+
 - Add retry logic for failed API calls
 - Implement actual comparison view bar charts
 - Add more granular factory data

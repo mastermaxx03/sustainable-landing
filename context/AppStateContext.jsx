@@ -10,6 +10,7 @@ export function AppStateProvider({ children }) {
   const [viewMode, setViewMode] = useState('supply-chain')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [filteredCountry, setFilteredCountry] = useState(null)
 
   const value = {
     selectedCountry,
@@ -21,7 +22,9 @@ export function AppStateProvider({ children }) {
     sidebarOpen,
     setSidebarOpen,
     isLoading,
-    setIsLoading
+    setIsLoading,
+    filteredCountry,
+    setFilteredCountry
   }
 
   return (
