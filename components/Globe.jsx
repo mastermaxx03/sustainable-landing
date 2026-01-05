@@ -9,8 +9,34 @@ import { useData } from "@/context/DataContext";
 import { useCamera } from "@/context/CameraContext";
 // import { EffectComposer, Bloom } from '@react-three/postprocessing'
 
-function Earth() {
+function Earth({ children }) {
   const meshRef = useRef();
+  const [texture, setTexture] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+
+    loader.load(
+      'https://unpkg.com/three-globe@2.31.1/example/img/earth-blue-marble.jpg',
+      // On success
+      (loadedTexture) => {
+        console.log('Earth texture loaded successfully');
+        setTexture(loadedTexture);
+        setLoading(false);
+        setError(false);
+      },
+      // On progress (optional)
+      undefined,
+      // On error
+      (err) => {
+        console.error('Error loading Earth texture:', err);
+        setError(true);
+        setLoading(false);
+      }
+    );
+  }, []);
 
   useFrame(() => {
     if (meshRef.current) {
@@ -20,20 +46,24 @@ function Earth() {
 
   return (
     <group ref={meshRef}>
-      {/* Ocean layer - Use MeshBasicMaterial so it doesn't need light */}
+      {/* Main Earth sphere with realistic texture */}
       <Sphere args={[2, 64, 64]}>
-        <meshBasicMaterial
-          color="#1E3A32" // Deep sea green - will show regardless of light
-        />
-      </Sphere>
-
-      {/* Land layer - Slightly larger, brighter */}
-      <Sphere args={[2.02, 64, 64]}>
-        <meshBasicMaterial
-          color="#2D5246" // Teal-green continents
-          transparent
-          opacity={0.9}
-        />
+        {texture && !loading && !error ? (
+          // Texture loaded successfully - show realistic Earth
+          <meshStandardMaterial
+            map={texture}
+            // No color tint - let texture show naturally
+            emissive="#0A4A44" // Very dark teal glow
+            emissiveIntensity={0.15}
+            roughness={0.9}
+            metalness={0.0}
+          />
+        ) : (
+          // Loading or error - show visible teal fallback (doesn't need light)
+          <meshBasicMaterial
+            color="#1E3A32" // Teal-green, always visible
+          />
+        )}
       </Sphere>
 
       {/* Atmosphere glow */}
@@ -45,6 +75,9 @@ function Earth() {
           side={THREE.BackSide}
         />
       </Sphere>
+
+      {/* Render children (markers, arcs, factories) inside the rotating group */}
+      {children}
     </group>
   );
 }
@@ -198,55 +231,55 @@ function Scene() {
 
   return (
     <>
-      <ambientLight intensity={1.5} />
-      <pointLight position={[10, 10, 10]} intensity={2} />
-      <pointLight position={[-10, -5, -5]} intensity={0.5} />
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 3, 5]} intensity={1.2} />
+      <pointLight position={[-5, -3, -5]} intensity={0.4} />
 
-      <Earth />
+      <Earth>
+        {/* Supply chain view */}
+        {viewMode === "supply-chain" && (
+          <>
+            {Object.entries(countries).map(([code, country]) => (
+              <CountryMarker
+                key={code}
+                country={code}
+                coordinates={country.coordinates}
+                emissions={country.emissions}
+              />
+            ))}
+            {routes.map((route) => (
+              <SupplyChainArc key={route.id} route={route} />
+            ))}
+          </>
+        )}
 
-      {/* Supply chain view */}
-      {viewMode === "supply-chain" && (
-        <>
-          {Object.entries(countries).map(([code, country]) => (
-            <CountryMarker
-              key={code}
-              country={code}
-              coordinates={country.coordinates}
-              emissions={country.emissions}
-            />
-          ))}
-          {routes.map((route) => (
-            <SupplyChainArc key={route.id} route={route} />
-          ))}
-        </>
-      )}
+        {/* Factory view */}
+        {viewMode === "factory" && (
+          <>
+            {Object.entries(factories).map(([country, factoryList]) =>
+              factoryList
+                .slice(0, 20)
+                .map((factory, idx) => (
+                  <FactoryDot key={`${country}-${idx}`} factory={factory} />
+                ))
+            )}
+          </>
+        )}
 
-      {/* Factory view */}
-      {viewMode === "factory" && (
-        <>
-          {Object.entries(factories).map(([country, factoryList]) =>
-            factoryList
-              .slice(0, 20)
-              .map((factory, idx) => (
-                <FactoryDot key={`${country}-${idx}`} factory={factory} />
-              ))
-          )}
-        </>
-      )}
-
-      {/* Heatmap view */}
-      {viewMode === "heatmap" && (
-        <>
-          {Object.entries(countries).map(([code, country]) => (
-            <CountryMarker
-              key={code}
-              country={code}
-              coordinates={country.coordinates}
-              emissions={country.emissions}
-            />
-          ))}
-        </>
-      )}
+        {/* Heatmap view */}
+        {viewMode === "heatmap" && (
+          <>
+            {Object.entries(countries).map(([code, country]) => (
+              <CountryMarker
+                key={code}
+                country={code}
+                coordinates={country.coordinates}
+                emissions={country.emissions}
+              />
+            ))}
+          </>
+        )}
+      </Earth>
 
       <OrbitControls
         ref={controlsRef}
