@@ -12,10 +12,13 @@ const countryFlags = {
   VN: "🇻🇳",
   US: "🇺🇸",
   EU: "🇪🇺",
+  JP: "🇯🇵",
+  AU: "🇦🇺",
+  CA: "🇨🇦",
 };
 
 export default function Sidebar() {
-  const { selectedCountry, setSelectedCountry, setSidebarOpen } = useAppState();
+  const { selectedCountry, setSelectedCountry, setSidebarOpen, filteredCountry, setFilteredCountry, viewMode } = useAppState();
   const { countries, routes } = useData();
   const { resetCamera } = useCamera();
 
@@ -26,12 +29,23 @@ export default function Sidebar() {
   const handleClose = () => {
     setSelectedCountry(null);
     setSidebarOpen(false);
+    setFilteredCountry(null);
     resetCamera();
+  };
+
+  const handleFilterToggle = () => {
+    if (filteredCountry === selectedCountry) {
+      setFilteredCountry(null); // Clear filter
+    } else {
+      setFilteredCountry(selectedCountry); // Set filter
+    }
   };
 
   const relatedRoutes = routes.filter(
     (route) => route.from === selectedCountry || route.to === selectedCountry
   );
+
+  const isFilterActive = filteredCountry === selectedCountry;
 
   return (
     <AnimatePresence>
@@ -157,10 +171,21 @@ export default function Sidebar() {
           </div>
         )}
 
-        {/* View supply chains button */}
-        <button className="w-full bg-[var(--teal-primary)] hover:bg-[var(--teal-bright)] text-white font-medium py-3 px-6 rounded-lg transition-colors">
-          View Supply Chains →
-        </button>
+        {/* View supply chains button - only in supply-chain mode */}
+        {viewMode === 'supply-chain' && (
+          <button
+            onClick={handleFilterToggle}
+            className={`w-full font-medium py-3 px-6 rounded-lg transition-colors ${
+              isFilterActive
+                ? 'bg-[var(--amber-warm)] hover:bg-[#D97706] text-white'
+                : 'bg-[var(--teal-primary)] hover:bg-[var(--teal-bright)] text-white'
+            }`}
+          >
+            {isFilterActive
+              ? 'Clear Route Filter'
+              : `Filter to ${country.name} Routes →`}
+          </button>
+        )}
       </motion.div>
     </AnimatePresence>
   );

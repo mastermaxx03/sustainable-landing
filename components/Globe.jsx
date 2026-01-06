@@ -225,7 +225,7 @@ function FactoryDot({ factory }) {
 }
 
 function Scene() {
-  const { viewMode } = useAppState();
+  const { viewMode, filteredCountry } = useAppState();
   const { countries, routes, factories } = useData();
   const { cameraRef, controlsRef } = useCamera();
 
@@ -247,9 +247,11 @@ function Scene() {
                 emissions={country.emissions}
               />
             ))}
-            {routes.map((route) => (
-              <SupplyChainArc key={route.id} route={route} />
-            ))}
+            {routes
+              .filter(route => !filteredCountry || route.from === filteredCountry)
+              .map((route) => (
+                <SupplyChainArc key={route.id} route={route} />
+              ))}
           </>
         )}
 
