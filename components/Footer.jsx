@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Footer() {
-  const [showInfo, setShowInfo] = useState(false)
+  const [showInfo, setShowInfo] = useState(false);
 
   return (
     <div
@@ -34,9 +34,9 @@ export default function Footer() {
                   srivastavaanimesh22@gmail.com
                 </a>
               </div>
-              <div className="text-xs text-[#6EE7B7] pt-1 border-t border-[#14B8A6]/20">
+              {/* <div className="text-xs text-[#6EE7B7] pt-1 border-t border-[#14B8A6]/20">
                 Data sources: IEA, Higg MSI, GHG Protocol
-              </div>
+              </div> */}
             </div>
           </motion.div>
         )}
@@ -50,5 +50,5 @@ export default function Footer() {
         <span className="text-lg font-serif">ⓘ</span>
       </button>
     </div>
-  )
+  );
 }
